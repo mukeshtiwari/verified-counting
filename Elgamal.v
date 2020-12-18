@@ -152,7 +152,11 @@ Section Encryption.
   
 End Encryption.
 
-
+Print elgamal_enc_nondep.
+Print elgamal_dec_nondep.
+Compute (elgamal_enc_nondep 983 158 905 10 20).
+Compute (elgamal_dec_nondep 983 331 (248, 592)).
+Compute (Zpow_mod 158 10 983).
 
 
   
