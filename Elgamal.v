@@ -75,34 +75,84 @@ Section Encryption.
     } assumption. lia. lia. lia. lia. lia.
   Qed.
 
-  Compute Zegcd 2 3.
-  Compute (Zmod (-1) 3).
-  
+
+  Definition elgamal_enc (mt : znz p) (rt : znz q) : znz p * znz p.
+    refine 
+      match mt, rt with
+      | mkznz _ m mH, mkznz _ r rH => (mkznz _ (Zpow_mod g r p) _,
+                                      mkznz _ (Zmod (Zpow_mod g m p * Zpow_mod h r p) p) _)
+      end. 
+    rewrite Zpow_mod_correct.
+    rewrite Zmod_mod. reflexivity.
+    lia. (* Show Proof. Show this would fuck the terms? *)
+    repeat rewrite Zpow_mod_correct.
+    rewrite <- Z.mul_mod. 
+    repeat rewrite Zmod_mod.
+    reflexivity. lia. lia. lia. 
+  Defined.
+                                                               
+    
   (* m : Zmod p, r : Zmod q *)
-  Definition elgamal_enc (m : Z) (r : Z) :=
+  Definition elgamal_enc_nondep (m : Z) (r : Z) :=
     (Zpow_mod g r p, Zmod (Zpow_mod g m p * Zpow_mod h r p) p).
 
-
-  Definition elgamal_re_enc '(c1, c2) (r : Z) :=
+  
+  Definition elgamal_re_enc (ct : znz p * znz p) (rt : znz q) : znz p * znz p.
+    refine
+      match ct, rt with
+      |(mkznz _ c cH, mkznz _ d dH), (mkznz _ r rH) => (mkznz _ (Zmod (c * Zpow_mod g r p) p) _,
+                                                       mkznz _ (Zmod (d * Zpow_mod h r p) p) _)
+                                                               
+      end. 
+    rewrite Zpow_mod_correct.
+    rewrite Zmod_mod. reflexivity.
+    lia.
+    repeat rewrite Zpow_mod_correct.
+    rewrite Zmod_mod. reflexivity.
+    lia.
+  Defined.
+  
+  
+  Definition elgamal_re_enc_nondep '(c1, c2) (r : Z) :=
     (Zmod (c1 * Zpow_mod g r p) p, Zmod (c2 * Zpow_mod h r p) p).
 
 
-  Definition mult_ciphertext '(c11, c12) '(c21, c22) :=
-    (Zmod (c11 * c21) p, Zmod (c12 * c22) p).
+  Definition mult_ciphertext (ct : znz p * znz p) (dt : znz p * znz p) : znz p * znz p.
+    refine
+      match ct, dt with
+      | (mkznz _ ct1 cH1, mkznz _ ct2 cH2), (mkznz _ dt1 dH1, mkznz _ dt2 dH2) =>
+        (mkznz _ (Zmod (ct1 * dt1) p) _, mkznz _ (Zmod (ct2 * dt2) p) _)
+      end.
+    rewrite Zmod_mod. reflexivity.
+    rewrite Zmod_mod. reflexivity.
+  Defined.
 
+  Definition mult_ciphertext_nondep '(c11, c12) '(c21, c22) :=
+    (Zmod (c11 * c21) p, Zmod (c12 * c22) p).
   
 
-  Compute (Zpow_mod 100 0 47).
-  Definition inv (m : Z) : Z :=
+  Check mul.
+  Definition elgamal_dec (ct : znz p * znz p) : znz p.
+    refine
+      match ct with
+      |(c, d) =>  mul p d (inv p c)
+      end.
+  Defined.
+  
+  
+  Definition invd (m : Z) : Z :=
     match Zegcd m p with
     | (u, _, _) => Zmod u p
     end.
 
     
-  Definition elgamal_dec '(c1, c2) :=
-   Zmod (c2 * inv (Zpow_mod c1 x p)) p. 
+  Definition elgamal_dec_nondep '(c1, c2) :=
+   Zmod (c2 * invd (Zpow_mod c1 x p)) p. 
+
   
 End Encryption.
+
+
 
 
   
