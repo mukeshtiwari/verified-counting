@@ -13,11 +13,7 @@ Section Encryption.
     (H3 : 1 < t < p) (H4 : Zpow_mod t k p <> 1)
     (H5 : g = Zpow_mod t k p)
     (x h : Z) (* private key, public key *)
-    (H6 : 1 < x < q) (H7 : h = Zpow_mod g x p). 
-
-  Check znz p.
-  Check add.
-  Check inv.
+    (H6 : 1 < x < q) (H7 : h = Zpow_mod g x p).
   
   
   Theorem p_pos : 0 < p. 
@@ -84,13 +80,15 @@ Section Encryption.
       end. 
     rewrite Zpow_mod_correct.
     rewrite Zmod_mod. reflexivity.
-    lia. (* Show Proof. Show this would fuck the terms? *)
+    abstract lia.
     repeat rewrite Zpow_mod_correct.
     rewrite <- Z.mul_mod. 
     repeat rewrite Zmod_mod.
-    reflexivity. lia. lia. lia. 
+    reflexivity. abstract lia.
+    abstract lia. abstract lia. 
   Defined.
-                                                               
+
+  
     
   (* m : Zmod p, r : Zmod q *)
   Definition elgamal_enc_nondep (m : Z) (r : Z) :=
@@ -106,10 +104,10 @@ Section Encryption.
       end. 
     rewrite Zpow_mod_correct.
     rewrite Zmod_mod. reflexivity.
-    lia.
+    abstract lia.
     repeat rewrite Zpow_mod_correct.
     rewrite Zmod_mod. reflexivity.
-    lia.
+    abstract lia.
   Defined.
   
   
@@ -131,7 +129,7 @@ Section Encryption.
     (Zmod (c11 * c21) p, Zmod (c12 * c22) p).
   
 
-  Check mul.
+  
   Definition elgamal_dec (ct : znz p * znz p) : znz p.
     refine
       match ct with
